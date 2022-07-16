@@ -4,7 +4,7 @@
   --secondary: rgba(35, 7, 85);
   --tertiary: rgba(90, 162, 233);
   --green: rgba(21, 126, 81);
-  --gray: rgba(183, 183, 183);
+  --grey: rgba(183, 183, 183);
   --dark-blue: rgba(51, 71, 90);
 }
 
@@ -46,6 +46,10 @@ hr {
   padding: 0;
 }
 
+::placeholder {
+  color: var(--grey) !important;
+}
+
 .btn {
   margin-top: 15px;
   width: 100%;
@@ -56,8 +60,8 @@ hr {
 }
 
 .btn-city {
-  background-color: var(--gray);
-  border-color: var(--gray);
+  background-color: var(--grey);
+  border-color: var(--grey);
   color: black;
 }
 /* search section end */
@@ -88,7 +92,9 @@ hr {
 .d-flex{
   gap:20px;
 }
+/* city section end */
 
+/* media query */
 @media only screen and (max-width: 570px) {
   .col {
     width: 100%;
