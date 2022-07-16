@@ -89,3 +89,14 @@ hr {
   gap:20px;
 }
 
+@media only screen and (max-width: 570px) {
+  .col {
+    width: 100%;
+    flex-basis: auto;  
+  }
+  #search {
+    padding-left: 1.5rem!important;
+    padding-right: 1.5rem!important;
+  }
+}
+
