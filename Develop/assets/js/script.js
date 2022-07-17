@@ -3,6 +3,7 @@ var cityWeatherDivEl = document.querySelector("#city-weather");
 var date = moment().format("M/DD/YYYY");
 var cities = ["Austin", "Chicago", "New York", "Orlando", "San Francisco", "Seattle", "Denver", "Atlanta"];
 var defaultCity = "San Diego";
+var token = "cea43c435331f22efaa268f4773df21e";
 
 var currentApiPath = {
                       "Temp": "current.temp",
@@ -49,8 +50,14 @@ for (city in cities) {
 
 var checkForAlert = function(){
   var alert = localStorage.getItem("weather-system-alert");
-
-
+  if (alert) {
+    var alertDivEl = document.createElement("div");
+    alertDivEl.classList.add("alert", "alert-warning");
+    alertDivEl.setAttribute("role", "alert");
+    alertDivEl.textContent = alert;
+    cityWeatherDivEl.appendChild(alertDivEl);
+    localStorage.removeItem("weather-system-alert");
+  }
 }
 
 // start fetch by getting city coords
@@ -58,38 +65,33 @@ var getWether = function () {
   checkForAlert();
   var city = localStorage.getItem("city");
   if (!city) {
-    city = defaultCity;
+    city = localStorage.getItem("last-city");
   }
-  var apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" 
-  + city + "&appid=870795f8d890820fb6d956c399b6c954&units=imperial";
+  var apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + token + "&units=imperial";
   fetch(apiUrl).then(function(response){
     if(response.ok){
       response.json().then(function (data) {
         getWeatherApiData(data.name, data.coord);
       });
     }else{
-      localStorage.setItem("weather-system-alert", "City not found.");
-      var lastCity = localStorage.getItem("last-city");
-      cityStoreLocation(lastCity);
+      localStorage.setItem("weather-system-alert", "City " + city + " not found.");
+      localStorage.setItem("city", defaultCity);
+      window.location.replace("./index.html");
     }
   });
 }
 
 // get weather data from coords
 var getWeatherApiData = function (city, coord) {
-  var token = "870795f8d890820fb6d956c399b6c954";
+  
   var apiUrl = "https://api.openweathermap.org/data/2.5/onecall?lat=" + coord?.lat + "&lon=" + coord?.lon + "&exclude=minutely,hourly&&appid=" + token + "&units=imperial";
   fetch(apiUrl).then(function(response){
     if(response.ok){
       response.json().then(function (data) {
         createCurrent(city, data);
       });
-
-    }else{
-      
     }
   });
-  
 }
 
 // create current weather 
@@ -204,19 +206,19 @@ var cityButtonHandler = function(event) {
 
 // city store and href location
 var cityStoreLocation = function(city) {
-  var lastCity = localStorage.getItem("city", city);
-  if (lastCity) {
-    localStorage.setItem("last-city", lastCity)
+  var curCity = localStorage.getItem("city", city);
+  if (curCity) {
+    localStorage.setItem("last-city", curCity);
   }else{
-    localStorage.setItem("last-city", defaultCity)
+    localStorage.setItem("last-city", defaultCity);
   }
-  localStorage.setItem("city", city)
-  
+  localStorage.setItem("city", city);
   window.location.replace("./index.html");
 }
 
 // start function call
 getWether();
 
+// event listeners
 searchFormEl.addEventListener("submit", formSubmitHandler);
 searchEl.addEventListener("click", cityButtonHandler);
