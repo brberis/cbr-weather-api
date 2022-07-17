@@ -190,7 +190,7 @@ var getWeatherIconUrl =function (data, apiMetrics, day) {
     apiMetrics["icon"] = apiMetrics["icon"].replace(/[0-9]/, day);
   }
   var iconName =  apiPathVal(data, apiMetrics["icon"]);
-  return "http://openweathermap.org/img/w/" + iconName + ".png"
+  return "https://openweathermap.org/img/w/" + iconName + ".png"
 }
 
 // uv colorizer
