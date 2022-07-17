@@ -9,7 +9,7 @@ Current weather and forecast.
 
 ## Description
 
-This project was developed using the API from [OpenWeather](https://openweathermap.org), all data is fetched though fetch API and JavaScript. The UX/UI is resembling the given mock-up. 
+This project was developed using the API from [OpenWeather](https://openweathermap.org), all data is fetched though JavaScript fetch API. The UX/UI is resembling the given mock-up. 
 <br/>
 
 ## Getting Started
