@@ -1,60 +1,111 @@
+// globals
 var cityWeatherDivEl = document.querySelector("#city-weather");
 var date = moment().format("M/DD/YYYY");
-var city = "San Diego";
+var cities = ["Austin", "Chicago", "New York", "Orlando", "San Francisco", "Seattle", "Denver", "Atlanta"];
+var defaultCity = "San Diego";
 
-var currentApiPath = {"Temp": "current.temp",
+var currentApiPath = {
+                      "Temp": "current.temp",
                       "Wind": "current.wind_speed",
                       "Humidity": "current.humidity",
-                      "UV Index": "current.uvi"
+                      "UV Index": "current.uvi",
+                      "icon": "current.weather.0.icon"
                       };
+
 var forecastApiPath = {
                       "Temp": "daily.0.temp.day",
                       "Humidity": "daily.0.humidity",
-                      "Wind": "daily.0.wind_speed"
+                      "Wind": "daily.0.wind_speed",
+                      "icon": "daily.0.weather.0.icon"
                       };
-
 
 var nextDay = function(num){
   date = moment(date, "M/DD/YYYY").add(num, 'days').format("M/DD/YYYY");
 }
 
-// get city coords
-var getCityCoords = function (city) {
+// query selectors
+var searchFormEl = document.querySelector("#city-form");
+var cityInputEl = document.querySelector("#city");
+var searchEl = document.querySelector("#search");
+
+// city search handler
+var formSubmitHandler = function(event) {
+  event.preventDefault();
+  // get value from input element
+  var searchCity = cityInputEl.value.trim();
+  if (searchCity) {
+    cityStoreLocation(searchCity);
+  }
+};
+
+// city buttons
+for (city in cities) {
+  var cityButtonEl = document.createElement("button");
+  cityButtonEl.classList.add("btn", "btn-primary", "btn-city");
+  cityButtonEl.setAttribute("data-city", cities[city]);
+  cityButtonEl.textContent = cities[city];
+  searchEl.appendChild(cityButtonEl);
+}
+
+var checkForAlert = function(){
+  var alert = localStorage.getItem("weather-system-alert");
+
+
+}
+
+// start fetch by getting city coords
+var getWether = function () {
+  checkForAlert();
+  var city = localStorage.getItem("city");
+  if (!city) {
+    city = defaultCity;
+  }
   var apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" 
   + city + "&appid=870795f8d890820fb6d956c399b6c954&units=imperial";
   fetch(apiUrl).then(function(response){
     if(response.ok){
       response.json().then(function (data) {
-        getWether(data.coord);
+        getWeatherApiData(data.name, data.coord);
       });
+    }else{
+      localStorage.setItem("weather-system-alert", "City not found.");
+      var lastCity = localStorage.getItem("last-city");
+      cityStoreLocation(lastCity);
     }
   });
 }
 
-var getWether = function (coord) {
-
-  var apiUrl = "https://api.openweathermap.org/data/2.5/onecall?lat=" + coord?.lat + "&lon=" + coord?.lon + "&exclude=minutely,hourly&&appid=870795f8d890820fb6d956c399b6c954&units=imperial";
-
+// get weather data from coords
+var getWeatherApiData = function (city, coord) {
+  var token = "870795f8d890820fb6d956c399b6c954";
+  var apiUrl = "https://api.openweathermap.org/data/2.5/onecall?lat=" + coord?.lat + "&lon=" + coord?.lon + "&exclude=minutely,hourly&&appid=" + token + "&units=imperial";
   fetch(apiUrl).then(function(response){
     if(response.ok){
       response.json().then(function (data) {
-        console.log(data);
-        createCurrent(data);
+        createCurrent(city, data);
       });
 
+    }else{
+      
     }
   });
   
 }
 
 // create current weather 
-var createCurrent = function(data) {
+var createCurrent = function(city, data) {
     var todayWatherDiv = document.createElement("div");
     todayWatherDiv.classList.add("city-detail", "mb-4");
     var cityTitleDivEl = document.createElement("div");
+    cityTitleDivEl.classList.add("d-flex", "no-gap");
     var cityTitleH2El = document.createElement("h2");
     cityTitleH2El.textContent = city + " (" + date + ")";
     cityTitleDivEl.appendChild(cityTitleH2El);
+    var iconSpan = document.createElement("span");
+    var iconImg = document.createElement("img");
+    iconImg.src = getWeatherIconUrl(data, currentApiPath, "current");
+    iconSpan.appendChild(iconImg);
+    cityTitleDivEl.appendChild(iconSpan);
     todayWatherDiv.appendChild(cityTitleDivEl);
     cityWeatherDivEl.appendChild(todayWatherDiv);
     todayWatherDiv.appendChild(getWeatherMetrics(data, currentApiPath, "current"))
@@ -74,13 +125,13 @@ var createForecast = function (data) {
   foreFlexDivEl.classList.add("row", "d-flex");
   foreTitleDivEl.appendChild(foreFlexDivEl);
 
-  foreCardDivEl = [];
-  foreDateH4El = [];
-  foreImgDivEl = [];
-  foreImgEl = [];
+  var foreCardDivEl = [];
+  var foreDateH4El = [];
+  var foreImgDivEl = [];
+  var foreImgEl = [];
   
-
-  for (let i = 1; i < 6; i++) {
+  nextDay(1);
+  for (var i = 1; i < 6; i++) {
     // create forecast date element
     foreCardDivEl[i] = document.createElement("div");
     foreCardDivEl[i].classList.add("col", "card");
@@ -89,46 +140,83 @@ var createForecast = function (data) {
     foreCardDivEl[i].appendChild(foreDateH4El[i]);
     foreImgDivEl[i] = document.createElement("div");
     foreImgEl[i] = document.createElement("img");
+    foreImgEl[i].src = getWeatherIconUrl(data, forecastApiPath, i);
     foreImgDivEl[i].appendChild(foreImgEl[i]);
     foreCardDivEl[i].appendChild(foreImgDivEl[i]);
     foreCardDivEl[i].appendChild(getWeatherMetrics(data, forecastApiPath, i));
     foreFlexDivEl.appendChild(foreCardDivEl[i]);
-
     nextDay(1);
     }
 }
 
+// reduce api path
 var apiPathVal = function (data, keys) {
   return keys.split('.').reduce(function (cur, key) {
       return cur[key];
   }, data);
 };
-  
+
+// get icon url
+var getWeatherIconUrl =function (data, apiMetrics, day) {
+  if (day >= 0){
+    apiMetrics["icon"] = apiMetrics["icon"].replace(/[0-9]/, day);
+  }
+  var iconName =  apiPathVal(data, apiMetrics["icon"]);
+  return "http://openweathermap.org/img/w/" + iconName + ".png"
+}
+
+// generate wether value elements
 var getWeatherMetrics = function (data, apiMetrics, day) {
   var cityDetailDivEl = document.createElement("div");
   var cityUlEl = document.createElement("ul");
   var liEl = [];
   var spanEl = [];
   for (metric in apiMetrics) {
-    if (day >= 0){
-      console.log("this day is", day);
-      apiMetrics[metric] = apiMetrics[metric].replace(/[0-9]/g, day);
-      // console.log(apiMetrics[metric].replace("_day_", day));
-      console.log(apiMetrics[metric]);
+    if (metric != "icon"){
+      if (day >= 0){
+        apiMetrics[metric] = apiMetrics[metric].replace(/[0-9]/g, day);
+      }
+      liEl[metric] = document.createElement("li");
+      spanEl[metric] = document.createElement("span");
+      if (metric === "UV Index") {
+        spanEl[metric].classList.add("badge", "badge-success");
+      }
+      liEl[metric].textContent = metric + ": ";
+      spanEl[metric].textContent = apiPathVal(data, apiMetrics[metric]); 
+      liEl[metric].appendChild(spanEl[metric]);
+      cityUlEl.appendChild(liEl[metric]);
     }
-    liEl[metric] = document.createElement("li");
-    spanEl[metric] = document.createElement("span");
-    if (metric === "UV Index") {
-      spanEl[metric].classList.add("badge", "badge-success");
-    }
-    liEl[metric].textContent = metric + ": ";
-    spanEl[metric].textContent = apiPathVal(data, apiMetrics[metric]); 
-    liEl[metric].appendChild(spanEl[metric]);
-    cityUlEl.appendChild(liEl[metric]);
   }
   cityDetailDivEl.appendChild(cityUlEl);
 
   return cityDetailDivEl;
 
 }
-getCityCoords(city);
+
+// button handler
+var cityButtonHandler = function(event) {
+  var targetEl = event.target;
+  if (targetEl.matches(".btn")) {
+    var selectedCity = event.target.getAttribute("data-city");
+    cityStoreLocation(selectedCity);
+  }
+}
+
+// city store and href location
+var cityStoreLocation = function(city) {
+  var lastCity = localStorage.getItem("city", city);
+  if (lastCity) {
+    localStorage.setItem("last-city", lastCity)
+  }else{
+    localStorage.setItem("last-city", defaultCity)
+  }
+  localStorage.setItem("city", city)
+  
+  window.location.replace("./index.html");
+}
+
+// start function call
+getWether();
+
+searchFormEl.addEventListener("submit", formSubmitHandler);
+searchEl.addEventListener("click", cityButtonHandler);

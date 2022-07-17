@@ -92,6 +92,11 @@ hr {
 .d-flex{
   gap:20px;
 }
+
+.no-gap{
+  gap:0;
+}
+
 /* city section end */
 
 /* media query */
