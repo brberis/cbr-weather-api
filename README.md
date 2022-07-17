@@ -18,7 +18,7 @@ This project was developed using the API from [OpenWeather](https://openweatherm
 
 <br/>
 
-### Features
+## Features
 
 * UV color tag.
 * Weather icons.
