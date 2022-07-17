@@ -3,6 +3,8 @@
 * @version 0.1, 07/17/22
 */
 
+
+
 // globals
 var cityWeatherDivEl = document.querySelector("#city-weather");
 var defaultCity = "San Diego";
@@ -70,6 +72,7 @@ if (cities.length > 0) {
   }
 }
 
+// display alerts
 var checkForAlert = function(){
   var alert = localStorage.getItem("weather-system-alert");
   if (alert) {
@@ -189,6 +192,7 @@ var getWeatherIconUrl =function (data, apiMetrics, day) {
   var iconName =  apiPathVal(data, apiMetrics["icon"]);
   return "http://openweathermap.org/img/w/" + iconName + ".png"
 }
+
 // uv colorizer
 var getUvColor = function (uv) {
   if (uv < 3) {
@@ -228,9 +232,7 @@ var getWeatherMetrics = function (data, apiMetrics, day) {
     }
   }
   cityDetailDivEl.appendChild(cityUlEl);
-
   return cityDetailDivEl;
-
 }
 
 // button handler
