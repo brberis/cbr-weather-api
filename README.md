@@ -18,11 +18,17 @@ This project was developed using the API from [OpenWeather](https://openweatherm
 
 <br/>
 
+### Features
+
+* UV color tag.
+* Weather icons.
+* 8 last searched cities.
+* 5 day forecast.
+* No hard coded.
+
 ### ToDo List 
 
 * Search with auto fill.
-* Search variables through query parameters.
-
 
 ### Live Demo  
 

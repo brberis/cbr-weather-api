@@ -50,6 +50,11 @@ hr {
   color: var(--grey) !important;
 }
 
+.required::placeholder {
+  color: rgb(168, 63, 63) !important;
+  opacity: 0.8 !important;
+}
+
 .btn {
   margin-top: 15px;
   width: 100%;
@@ -73,9 +78,26 @@ hr {
 }
 
 .badge {
-  background-color: var(--green);
   padding: 8px 15px;
   margin-left: 10px;
+}
+
+.uv-green {
+  background-color: rgb(29, 111, 16);
+}
+
+.uv-yellow {
+  background-color: rgb(255, 251, 0);
+  color: black;
+}
+.uv-orange {
+  background-color: rgb(226, 100, 4);
+}
+.uv-red {
+  background-color: rgb(223, 37, 8);
+}
+.uv-purple {
+  background-color: rgb(118, 2, 185);
 }
 
 .row {
@@ -96,7 +118,6 @@ hr {
 .no-gap{
   gap:0;
 }
-
 /* city section end */
 
 /* media query */
