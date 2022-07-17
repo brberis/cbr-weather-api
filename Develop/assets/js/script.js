@@ -1,3 +1,8 @@
+/**
+* @author  Cristobal A Barberis
+* @version 0.1, 07/17/22
+*/
+
 // globals
 var cityWeatherDivEl = document.querySelector("#city-weather");
 var date = moment().format("M/DD/YYYY");
