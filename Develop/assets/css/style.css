@@ -1,0 +1,113 @@
+/* initialization start */
+:root {
+  --primary: rgba(59, 109, 195);
+  --secondary: rgba(35, 7, 85);
+  --tertiary: rgba(90, 162, 233);
+  --green: rgba(21, 126, 81);
+  --grey: rgba(183, 183, 183);
+  --dark-blue: rgba(51, 71, 90);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 700;
+}
+
+ul {
+padding-left: 0;
+}
+
+li {
+  list-style-type: none;
+  margin: 10px 0;
+}
+hr {
+  height: 1px;
+  background: grey;
+  margin-bottom: 0;
+}
+
+/* initialization end */
+
+
+/* header */
+.title {
+  background-image: linear-gradient(to right, var(--primary), var(--secondary));
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
+
+/* search section start */
+.form-group {
+  padding: 0;
+}
+
+::placeholder {
+  color: var(--grey) !important;
+}
+
+.btn {
+  margin-top: 15px;
+  width: 100%;
+}
+
+.btn-search {
+  background-color: var(--tertiary);
+}
+
+.btn-city {
+  background-color: var(--grey);
+  border-color: var(--grey);
+  color: black;
+}
+/* search section end */
+
+/* city section start */
+.city-detail {
+  border: 1px solid black;
+  padding: 8px;
+}
+
+.badge {
+  background-color: var(--green);
+  padding: 8px 15px;
+  margin-left: 10px;
+}
+
+.row {
+  margin-right: 0px;
+  margin-left: 0px;
+}
+
+.card {
+  background-color: var(--dark-blue);
+  color: white;
+  padding: 5px;
+}
+
+.d-flex{
+  gap:20px;
+}
+
+.no-gap{
+  gap:0;
+}
+
+/* city section end */
+
+/* media query */
+@media only screen and (max-width: 570px) {
+  .col {
+    width: 100%;
+    flex-basis: auto;  
+  }
+  #search {
+    padding-left: 1.5rem!important;
+    padding-right: 1.5rem!important;
+  }
+}
+
