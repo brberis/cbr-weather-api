@@ -7,12 +7,16 @@ var currentApiPath = {"Temp": "current.temp",
                       "Humidity": "current.humidity",
                       "UV Index": "current.uvi"
                       };
-var forecastApiPath = [
-                      {"Temp": "daily._day_.temp.day"},
-                      {"Humidity": "daily._day_.humidity"},
-                      {"Wind": "daily._day_.wind_speed"}
-                    ];
+var forecastApiPath = {
+                      "Temp": "daily.0.temp.day",
+                      "Humidity": "daily.0.humidity",
+                      "Wind": "daily.0.wind_speed"
+                      };
 
+
+var nextDay = function(num){
+  date = moment(date, "M/DD/YYYY").add(num, 'days').format("M/DD/YYYY");
+}
 
 // get city coords
 var getCityCoords = function (city) {
@@ -53,27 +57,13 @@ var createCurrent = function(data) {
     cityTitleDivEl.appendChild(cityTitleH2El);
     todayWatherDiv.appendChild(cityTitleDivEl);
     cityWeatherDivEl.appendChild(todayWatherDiv);
-    todayWatherDiv.appendChild(getWeatherMetrics(data, currentApiPath))
+    todayWatherDiv.appendChild(getWeatherMetrics(data, currentApiPath, "current"))
 
     createForecast(data);
-
-
-      
-    
-  
-    // }
-    // create detail elements
-
-  
- 
-//   var metrics = getWeatherMetrics(data);
-//   parentEl.appendChild(metrics);
-
-
-//   // next days
 }
+
 // display current weather
-var createForecast = function () {
+var createForecast = function (data) {
   var foreTitleDivEl = document.createElement("div");
   foreTitleDivEl.classList.add("city-forecast");
   var foreTitleH3El = document.createElement("h3");
@@ -88,8 +78,9 @@ var createForecast = function () {
   foreDateH4El = [];
   foreImgDivEl = [];
   foreImgEl = [];
+  
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 1; i < 6; i++) {
     // create forecast date element
     foreCardDivEl[i] = document.createElement("div");
     foreCardDivEl[i].classList.add("col", "card");
@@ -100,12 +91,11 @@ var createForecast = function () {
     foreImgEl[i] = document.createElement("img");
     foreImgDivEl[i].appendChild(foreImgEl[i]);
     foreCardDivEl[i].appendChild(foreImgDivEl[i]);
+    foreCardDivEl[i].appendChild(getWeatherMetrics(data, forecastApiPath, i));
     foreFlexDivEl.appendChild(foreCardDivEl[i]);
-    // todayWatherDiv.appendChild(getWeatherMetrics(data, currentApiPath))
-    date = moment(date, "M/DD/YYYY").add(1, 'days').format("M/DD/YYYY");
 
-  }
-  // cityWeatherDivEl.appendChild(foreFlexDivEl);
+    nextDay(1);
+    }
 }
 
 var apiPathVal = function (data, keys) {
@@ -114,13 +104,18 @@ var apiPathVal = function (data, keys) {
   }, data);
 };
   
-
-var getWeatherMetrics = function (data, apiMetrics) {
+var getWeatherMetrics = function (data, apiMetrics, day) {
   var cityDetailDivEl = document.createElement("div");
   var cityUlEl = document.createElement("ul");
   var liEl = [];
   var spanEl = [];
   for (metric in apiMetrics) {
+    if (day >= 0){
+      console.log("this day is", day);
+      apiMetrics[metric] = apiMetrics[metric].replace(/[0-9]/g, day);
+      // console.log(apiMetrics[metric].replace("_day_", day));
+      console.log(apiMetrics[metric]);
+    }
     liEl[metric] = document.createElement("li");
     spanEl[metric] = document.createElement("span");
     if (metric === "UV Index") {
