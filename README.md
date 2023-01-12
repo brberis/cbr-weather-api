@@ -26,6 +26,17 @@ This project was developed using the API from [OpenWeather](https://openweatherm
 * 5 day forecast.
 * No hard coded.
 
+## How to Deploy
+
+To deploy this weather dashboard, please follow these steps:
+
+1. Clone the repository by running the command git clone: 
+[https://github.com/brberis/cbr-weather-api.git](https://github.com/brberis/cbr-weather-api.git)
+2. Navigate to the root of the project directory using the command `cd repo-name`.
+3. Create your own repo and push.
+4. Use github pages to deploy.
+
+
 ### ToDo List 
 
 * Search with auto fill.
